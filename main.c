@@ -3,48 +3,41 @@
 #include<stdlib.h>
 #include<sys/ioctl.h>
 #include<signal.h>
+#include<ncurses.h>
 
 #define DELAY 150000
 
-void terminalSize(int *W, int *H) {
-	struct winsize ws;
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) {
-		perror("ioctl");
-		exit(EXIT_FAILURE);
-	}
-	*W = ws.ws_col; // width
-	*H = ws.ws_row; // height
-}
-
 // exit and re-show cursor
 void signalHandler(int signum) {
-	printf("\033[?25h\n");
-	fflush(stdout);
+	endwin();
 	exit(signum);
 }
 
 void printMatrix(int H, int W, int matrix[H][W]) {
-	printf("\033[2J\033[1;1H"); // Clear screen and move cursor to top-left
+	clear();
 	for (int y = 0; y < H; y++) {
 		for (int x = 0; x < W; x++) {
-			printf("%c", matrix[y][x] ? '#' : ' ');
+			mvaddch(y, x, matrix[y][x] ? '#' : ' ');
 		}
 		printf("\n");
 	}
-	fflush(stdout);
+	refresh();
 }
 
 int main() {
-	// hide cursor
-	printf("\033[?25l");
-	fflush(stdout);
-	
+	// start ncurses
+	initscr();
+	cbreak();
+	noecho();
+	keypad(stdscr, TRUE);
+	timeout(0);
+
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 	signal(SIGQUIT, signalHandler);
 
 	int W, H;
-	terminalSize(&W, &H);
+	getmaxyx(stdscr, H, W);
 
 	// initial generation
 	int matrix[H][W];
@@ -62,6 +55,12 @@ int main() {
 	
 	// === THE GAME OF LIFE === //
 	while(1) {
+		// exit program
+		int ch = getch();
+		if (ch == 'q') {
+		    break;
+		}
+
 		// itinerate matrix
 		for(int y = 0; y < H; y++) {
 			for (int x = 0; x < W; x++) {
@@ -94,4 +93,7 @@ int main() {
 		printMatrix(H, W, matrix);
 		usleep(DELAY);
 	}
+
+	endwin();
+	return 0;
 }
