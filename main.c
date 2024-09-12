@@ -1,25 +1,61 @@
 #include<stdio.h>
-#include <unistd.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/ioctl.h>
+#include<signal.h>
 
-#define SIZE 20
+void terminalSize(int *W, int *H) {
+	struct winsize ws;
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) {
+		perror("ioctl");
+		exit(EXIT_FAILURE);
+	}
+	*W = ws.ws_col; // width
+	*H = ws.ws_row; // height
+}
+
+// exit and re-show cursor
+void signalHandler(int signum) {
+	printf("\033[?25h\n");
+	fflush(stdout);
+	exit(signum);
+}
 
 int main() {
-	int matrix[SIZE][SIZE] = {0};	// current gen
-	matrix[3][3] = 1; matrix[4][4] = 1; matrix[5][2] = 1; matrix[5][3] = 1; matrix[5][4] = 1;
+	// hide cursor
+	printf("\033[?25l");
+	fflush(stdout);
+	
+	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
+	signal(SIGQUIT, signalHandler);
 
+
+	int W, H;
+	terminalSize(&W, &H);
+
+	// initial generation
+	int matrix[H][W];
+	for(int y=0;y<H;y++){for(int x=0;x<W;x++){ matrix[y][x] = 0;  }}
+	
+	matrix[3][3] = 1; matrix[4][4] = 1;
+	matrix[5][2] = 1; matrix[5][3] = 1;
+	matrix[5][4] = 1;
+	
+	// === THE GAME OF LIFE === //
 	while(1) {
-		int nextgen[SIZE][SIZE] = {0};
+		int nextgen[H][W];
 
 		// itinerate matrix
-		for(int y = 0; y < SIZE; y++) {
-			for (int x = 0; x < SIZE; x++) {
+		for(int y = 0; y < H; y++) {
+			for (int x = 0; x < W; x++) {
 				// moore neighbourhood
 				int count = 0;
 				for(int dy = -1; dy < 2; dy++) {
                 			for(int dx = -1; dx < 2; dx++) {
                 				if (dy == 0 && dx == 0) continue;
-                				int ny = (y + dy + SIZE) % SIZE;
-                				int nx = (x + dx + SIZE) % SIZE;
+                				int ny = (y + dy + H) % H;
+                				int nx = (x + dx + W) % W;
                 				count += matrix[ny][nx];
                 			}
             			}
@@ -28,8 +64,8 @@ int main() {
 		}
 
 		// update current generation
-		for(int y = 0; y < SIZE; y++) {
-			for(int x = 0; x < SIZE; x++) {
+		for(int y = 0; y < H; y++) {
+			for(int x = 0; x < W; x++) {
 				// dae rules
 				if (matrix[y][x] && (nextgen[y][x] < 2 || nextgen[y][x] > 3)) {
 					matrix[y][x] = 0; // cell dies
@@ -41,15 +77,13 @@ int main() {
 
 		// print matrix
 		printf("\033[2J\033[1;1H");
-		for(int y = 0; y < SIZE; y++) {
-			for(int x = 0; x < SIZE; x++) {
-				char square = 0x25A0;
+		for(int y = 0; y < H; y++) {
+			for(int x = 0; x < W; x++) {
 				printf("%c", matrix[y][x] ? '#' : ' ');
 			}
 			printf("\n");
 		}
 
-		usleep(100000);
+		usleep(150000);
 	}
-	return 0;
 }
