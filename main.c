@@ -5,11 +5,7 @@
 
 int main() {
 	int matrix[SIZE][SIZE] = {0};	// current gen
-	
-	// glinder
-			  matrix[4][3] = 1;
-					    matrix[4][4] = 1;
-	matrix[5][2] = 1; matrix[5][3] = 1; matrix[5][4] = 1;
+	matrix[3][3] = 1; matrix[4][4] = 1; matrix[5][2] = 1; matrix[5][3] = 1; matrix[5][4] = 1;
 
 	while(1) {
 		int nextgen[SIZE][SIZE] = {0};
@@ -31,21 +27,29 @@ int main() {
 			}
 		}
 
-		// copy nextgen to matrix
+		// update current generation
 		for(int y = 0; y < SIZE; y++) {
 			for(int x = 0; x < SIZE; x++) {
-				matrix[y][x] = nextgen[y][x];
+				// dae rules
+				if (matrix[y][x] && (nextgen[y][x] < 2 || nextgen[y][x] > 3)) {
+					matrix[y][x] = 0; // cell dies
+				} else if (!matrix[y][x] && nextgen[y][x] == 3) {
+					matrix[y][x] = 1; // cell is born
+				}
 			}
 		}
 
-		// print
+		// print matrix
+		printf("\033[2J\033[1;1H");
 		for(int y = 0; y < SIZE; y++) {
 			for(int x = 0; x < SIZE; x++) {
-				printf("%i", matrix[y][x]);
+				char square = 0x25A0;
+				printf("%c", matrix[y][x] ? '#' : ' ');
 			}
 			printf("\n");
 		}
 
-		sleep(1);
+		usleep(100000);
 	}
+	return 0;
 }
