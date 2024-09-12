@@ -7,19 +7,12 @@
 
 #define DELAY 150000
 
-// exit and re-show cursor
-void signalHandler(int signum) {
-	endwin();
-	exit(signum);
-}
-
 void printMatrix(int H, int W, int matrix[H][W]) {
 	clear();
 	for (int y = 0; y < H; y++) {
 		for (int x = 0; x < W; x++) {
 			mvaddch(y, x, matrix[y][x] ? '#' : ' ');
 		}
-		printf("\n");
 	}
 	refresh();
 }
@@ -31,10 +24,6 @@ int main() {
 	noecho();
 	keypad(stdscr, TRUE);
 	timeout(0);
-
-	signal(SIGINT, signalHandler);
-	signal(SIGTERM, signalHandler);
-	signal(SIGQUIT, signalHandler);
 
 	int W, H;
 	getmaxyx(stdscr, H, W);
