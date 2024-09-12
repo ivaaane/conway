@@ -4,6 +4,8 @@
 #include<sys/ioctl.h>
 #include<signal.h>
 
+#define DELAY 150000
+
 void terminalSize(int *W, int *H) {
 	struct winsize ws;
 	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) {
@@ -21,6 +23,17 @@ void signalHandler(int signum) {
 	exit(signum);
 }
 
+void printMatrix(int H, int W, int matrix[H][W]) {
+	printf("\033[2J\033[1;1H"); // Clear screen and move cursor to top-left
+	for (int y = 0; y < H; y++) {
+		for (int x = 0; x < W; x++) {
+			printf("%c", matrix[y][x] ? '#' : ' ');
+		}
+		printf("\n");
+	}
+	fflush(stdout);
+}
+
 int main() {
 	// hide cursor
 	printf("\033[?25l");
@@ -30,13 +43,18 @@ int main() {
 	signal(SIGTERM, signalHandler);
 	signal(SIGQUIT, signalHandler);
 
-
 	int W, H;
 	terminalSize(&W, &H);
 
 	// initial generation
 	int matrix[H][W];
-	for(int y=0;y<H;y++){for(int x=0;x<W;x++){ matrix[y][x] = 0;  }}
+	int nextgen[H][W];
+
+	for(int y=0;y<H;y++) {
+		for(int x=0;x<W;x++) {
+			matrix[y][x] = 0;
+		}
+	}
 	
 	matrix[3][3] = 1; matrix[4][4] = 1;
 	matrix[5][2] = 1; matrix[5][3] = 1;
@@ -44,8 +62,6 @@ int main() {
 	
 	// === THE GAME OF LIFE === //
 	while(1) {
-		int nextgen[H][W];
-
 		// itinerate matrix
 		for(int y = 0; y < H; y++) {
 			for (int x = 0; x < W; x++) {
@@ -75,15 +91,7 @@ int main() {
 			}
 		}
 
-		// print matrix
-		printf("\033[2J\033[1;1H");
-		for(int y = 0; y < H; y++) {
-			for(int x = 0; x < W; x++) {
-				printf("%c", matrix[y][x] ? '#' : ' ');
-			}
-			printf("\n");
-		}
-
-		usleep(150000);
+		printMatrix(H, W, matrix);
+		usleep(DELAY);
 	}
 }
