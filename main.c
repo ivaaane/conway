@@ -1,14 +1,10 @@
 #include<stdio.h>
-#include<unistd.h>
-#include<stdlib.h>
-#include<sys/ioctl.h>
-#include<signal.h>
 #include<ncurses.h>
+#include<string.h>
 
-#define DELAY 100000
+#define DELAY 50
 
 void printMatrix(int H, int W, int matrix[H][W]) {
-	clear();
 	for (int y = 0; y < H; y++) {
 		for (int x = 0; x < W; x++) {
 			mvaddch(y, x, matrix[y][x] ? '#' : ' ');
@@ -24,20 +20,17 @@ int main() {
 	noecho();
 	keypad(stdscr, TRUE);
 	timeout(0);
+	curs_set(0);
 
+	// terminal size
 	int W, H;
 	getmaxyx(stdscr, H, W);
 
 	// initial generation
 	int matrix[H][W];
-	int nextgen[H][W];
-
-	for(int y=0;y<H;y++) {
-		for(int x=0;x<W;x++) {
-			matrix[y][x] = 0;
-		}
-	}
+	memset(matrix, 0, sizeof(matrix));
 	
+	// starting config (temporal)
 	matrix[3][3] = 1; matrix[4][3] = 1; matrix[5][3] = 1;
 	matrix[4][2] = 1; matrix[5][4] = 1;
 
@@ -50,6 +43,7 @@ int main() {
 		}
 
 		// itinerate matrix
+		int nextgen[H][W];
 		for(int y = 0; y < H; y++) {
 			for (int x = 0; x < W; x++) {
 				// moore neighbourhood
@@ -79,9 +73,10 @@ int main() {
 		}
 
 		printMatrix(H, W, matrix);
-		usleep(DELAY);
+		napms(DELAY);
 	}
-
+	
+	curs_set(1);
 	endwin();
 	return 0;
 }
