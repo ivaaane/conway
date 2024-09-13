@@ -5,7 +5,7 @@
 #include<signal.h>
 #include<ncurses.h>
 
-#define DELAY 150000
+#define DELAY 100000
 
 void printMatrix(int H, int W, int matrix[H][W]) {
 	clear();
@@ -38,10 +38,9 @@ int main() {
 		}
 	}
 	
-	matrix[3][3] = 1; matrix[4][4] = 1;
-	matrix[5][2] = 1; matrix[5][3] = 1;
-	matrix[5][4] = 1;
-	
+	matrix[3][3] = 1; matrix[4][3] = 1; matrix[5][3] = 1;
+	matrix[4][2] = 1; matrix[5][4] = 1;
+
 	// === THE GAME OF LIFE === //
 	while(1) {
 		// exit program
