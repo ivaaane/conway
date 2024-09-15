@@ -1,19 +1,41 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<ncurses.h>
 #include<string.h>
 
-#define DELAY 50
-
-void printMatrix(int H, int W, int matrix[H][W]) {
+void printMatrix(int H, int W, int matrix[H][W], char CHAR) {
 	for (int y = 0; y < H; y++) {
 		for (int x = 0; x < W; x++) {
-			mvaddch(y, x, matrix[y][x] ? '#' : ' ');
+			mvaddch(y, x, matrix[y][x] ? CHAR : ' ');
 		}
 	}
 	refresh();
 }
 
-int main() {
+int argParse(int argc, char* argv[], int* delay, char* aliveChar) {
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-d") == 0) {
+			if (i + 1 < argc) {
+				*delay = atoi(argv[++i]);
+			} else {
+				fprintf(stderr, "Error: -d option requires an argument.\n");
+				exit(1);
+			}
+		} else if (strcmp(argv[i], "-c") == 0) {
+			if (i + 1 < argc) {
+				*aliveChar = argv[++i][0];
+			} else {
+				fprintf(stderr, "Error: -c option requires an argument.\n");
+				exit(1);
+			}
+		} else {
+			fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
+			exit(1);
+		}
+	}
+}
+
+int main(int argc, char* argv[]) {
 	// start ncurses
 	initscr();
 	cbreak();
@@ -21,6 +43,11 @@ int main() {
 	keypad(stdscr, TRUE);
 	timeout(0);
 	curs_set(0);
+
+	// input
+	int DELAY = 50;
+	char CHAR = '#';
+	argParse(argc, argv, &DELAY, &CHAR);
 
 	// terminal size
 	int W, H;
@@ -38,9 +65,7 @@ int main() {
 	while(1) {
 		// exit program
 		int ch = getch();
-		if (ch == 'q') {
-		    break;
-		}
+		if (ch == 'q') break;
 
 		// itinerate matrix
 		int nextgen[H][W];
@@ -72,7 +97,7 @@ int main() {
 			}
 		}
 
-		printMatrix(H, W, matrix);
+		printMatrix(H, W, matrix, CHAR);
 		napms(DELAY);
 	}
 	
