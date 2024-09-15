@@ -39,7 +39,7 @@ conway -c 8 -d 25
 ## Install
 
 ```sh
-curl -Ls http://github.com/ivaaane/conway/raw/main/install.sh | bash
+curl -Ls https://raw.githubusercontent.com/ivaaane/conway/refs/heads/main/install.sh?token=GHSAT0AAAAAACWIFOU5FYHOB6FX4GD5DHFIZXHFPZQ | bash
 which conway
 ```
 
