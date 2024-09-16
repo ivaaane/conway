@@ -39,15 +39,19 @@ conway -c 8 -d 25
 ## Install
 
 ```sh
-curl -Ls https://raw.githubusercontent.com/ivaaane/conway/refs/heads/main/install.sh?token=GHSAT0AAAAAACWIFOU5FYHOB6FX4GD5DHFIZXHFPZQ | bash
-which conway
+curl -Ls https://raw.githubusercontent.com/ivaaane/conway/refs/heads/main/install.sh | bash
 ```
 
 ## Roadmap
 
 [x] Thing works.
+
 [] More default configurations.
+
 [] Option to input custom configuration.
+
 [] Option to limit the number of generations.
+
 [] Option to randomize the initial configuration.
+
 [] Color options.
