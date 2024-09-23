@@ -42,14 +42,14 @@ curl -Ls https://raw.githubusercontent.com/ivaaane/conway/refs/heads/main/instal
 
 ## Roadmap
 
-[x] Thing works.
+- [x] Thing works.
 
-[  ] More default configurations.
+- [ ] More default configurations.
 
-[  ] Option to input custom configuration.
+- [ ] Option to input custom configuration.
 
-[  ] Option to limit the number of generations.
+- [ ] Option to limit the number of generations.
 
-[  ] Option to randomize the initial configuration.
+- [ ] Option to randomize the initial configuration.
 
-[  ] Color options.
+- [ ] Color options.
