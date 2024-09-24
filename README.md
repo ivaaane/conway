@@ -37,7 +37,9 @@ conway -c 8 -d 25
 ## Install
 
 ```sh
-curl -Ls https://raw.githubusercontent.com/ivaaane/conway/refs/heads/main/install.sh | bash
+git clone https://github.com/ivaaane/conway.git
+cd conway
+sudo make install
 ```
 
 ## Roadmap
