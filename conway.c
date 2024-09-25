@@ -6,19 +6,20 @@
 #include <string.h>
 #include <unistd.h>
 
+void nextGeneration(int H, int W, int matrix[H][W]);
 void printMatrix(int H, int W, int matrix[H][W], char CHAR);
 void exitCheck();
 void argParse(int argc, char* argv[], int* delay, char* aliveChar);
 
 int main(int argc, char* argv[]) {	
 	// input
-	int DELAY = 50;
+	int DELAY = 100;
 	char CHAR = '#';
 	argParse(argc, argv, &DELAY, &CHAR);
 
 	// start termbox2
 	if (tb_init() != 0) {
-		printf("Something very very very bad happened with termbox");
+		printf("Something very very very bad happened with termbox\n");
 		return 1;
 	}
 	tb_clear();
@@ -34,47 +35,46 @@ int main(int argc, char* argv[]) {
 	// starting config
 	matrix[3][3] = 1; matrix[4][3] = 1; matrix[5][3] = 1;
 	matrix[4][2] = 1; matrix[5][4] = 1;
-
-	// === THE GAME OF LIFE === //
+	
+	// loop
 	while(1) {
 		exitCheck();
-
-		// itinerate matrix
-		int nextgen[H][W];
-		for(int y = 0; y < H; y++) {
-			for (int x = 0; x < W; x++) {
-				// moore neighbourhood
-				int count = 0;
-				for(int dy = -1; dy < 2; dy++) {
-                			for(int dx = -1; dx < 2; dx++) {
-                				if (dy == 0 && dx == 0) continue;
-                				int ny = (y + dy + H) % H;
-                				int nx = (x + dx + W) % W;
-                				count += matrix[ny][nx];
-                			}
-            			}
-				nextgen[y][x] = count;
-			}
-		}
-
-		// update current generation
-		for(int y = 0; y < H; y++) {
-			for(int x = 0; x < W; x++) {
-				// dae rules
-				if (matrix[y][x] && (nextgen[y][x] < 2 || nextgen[y][x] > 3)) {
-					matrix[y][x] = 0; // cell dies
-				} else if (!matrix[y][x] && nextgen[y][x] == 3) {
-					matrix[y][x] = 1; // cell is born
-				}
-			}
-		}
-
+		nextGeneration(H, W, matrix);
 		printMatrix(H, W, matrix, CHAR);
 		usleep(DELAY * 1000);
 	}
-	
-	tb_shutdown();
-	return 0;
+}
+
+void nextGeneration(int H, int W, int matrix[H][W]) {
+	// itinerate matrix
+	int nextgen[H][W];
+	for(int y = 0; y < H; y++) {
+		for (int x = 0; x < W; x++) {
+			// moore neighbourhood
+			int count = 0;
+			for(int dy = -1; dy < 2; dy++) {
+				for(int dx = -1; dx < 2; dx++) {
+					if (dy == 0 && dx == 0) continue;
+					int ny = (y + dy + H) % H;
+					int nx = (x + dx + W) % W;
+					count += matrix[ny][nx];
+				}
+			}
+			nextgen[y][x] = count;
+		}
+	}
+
+	// update current generation
+	for(int y = 0; y < H; y++) {
+		for(int x = 0; x < W; x++) {
+			// dae rules
+			if (matrix[y][x] && (nextgen[y][x] < 2 || nextgen[y][x] > 3)) {
+				matrix[y][x] = 0; // cell dies
+			} else if (!matrix[y][x] && nextgen[y][x] == 3) {
+				matrix[y][x] = 1; // cell is born
+			}
+		}
+	}
 }
 
 void printMatrix(int H, int W, int matrix[H][W], char CHAR) {
