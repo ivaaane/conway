@@ -5,7 +5,7 @@ conway: conway.c
 
 .PHONY: clean
 clean:
-	$(RM) lavat
+	$(RM) conway
 
 .PHONY: install
 install: conway

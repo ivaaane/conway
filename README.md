@@ -22,11 +22,11 @@ conway
 
 Options:
 
-| flag      | description                              | default |
-|-----------|------------------------------------------|---------|
-|`-c [char]`| The character representing a living cell | #       |
-|`-d [int]` | The delay time between ticks             | 50      |
-|`-h`       | Show help                                |         |
+| flag      | description                              |
+|-----------|------------------------------------------|
+|`-c [char]`| The character representing a living cell |
+|`-d [int]` | The delay time between ticks             |
+|`-h`       | Show help                                |
 
 Other example:
 

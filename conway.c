@@ -14,7 +14,7 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar);
 int main(int argc, char* argv[]) {	
 	// input
 	int DELAY = 100;
-	char CHAR = '#';
+	char CHAR = '@';
 	argParse(argc, argv, &DELAY, &CHAR);
 
 	// start termbox2
@@ -116,8 +116,8 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar) {
 			printf("Conway's Game of Life - A living world in your terminal!\n\n");
 			printf("Usage: conway [OPTIONS]\n");
 			printf("Options:\n");
-			printf("	-c [char]        Character representing a living cell. Default: '#'.\n");
-			printf("	-d [int]         Delay time between ticks in milliseconds. Default: 50.\n");
+			printf("	-c [char]        Character representing a living cell.\n");
+			printf("	-d [int]         Delay time between ticks in milliseconds.\n");
 			printf("	-h               Show this help message.\n");
 			printf("Example:\n");
 			printf("	conway -c 8 -d 25\n\n");
