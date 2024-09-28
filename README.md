@@ -27,6 +27,7 @@ Options:
 |`-c [char]`| The character representing a living cell |
 |`-d [int]` | The delay time between ticks             |
 |`-r`       | Randomizes the initial generation        |
+|`-l [int]` | Limits the number of generations         |
 |`-h`       | Show help                                |
 
 Other example:
@@ -51,7 +52,7 @@ sudo make install
 
 - [ ] Option to input custom configuration.
 
-- [ ] Option to limit the number of generations.
+- [x] Option to limit the number of generations.
 
 - [x] Option to randomize the initial configuration.
 

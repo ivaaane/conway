@@ -11,14 +11,15 @@ void nextGeneration(int H, int W, int matrix[H][W]);
 void printMatrix(int H, int W, int matrix[H][W], char CHAR);
 void configParse(int H, int W, int matrix[H][W], int RAND);
 void exitCheck();
-void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand);
+void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand, int* limit);
 
 int main(int argc, char* argv[]) {	
 	// input
 	int DELAY = 100;
 	char CHAR = '@';
 	int RAND  = 0;
-	argParse(argc, argv, &DELAY, &CHAR, &RAND);
+	int LIMIT = 0;
+	argParse(argc, argv, &DELAY, &CHAR, &RAND, &LIMIT);
 
 	// start termbox2
 	if (tb_init() != 0) {
@@ -42,6 +43,15 @@ int main(int argc, char* argv[]) {
 		nextGeneration(H, W, matrix);
 		printMatrix(H, W, matrix, CHAR);
 		usleep(DELAY * 1000);
+		
+		if (LIMIT > 0) {
+			LIMIT--;
+			if (LIMIT == 0) {
+				tb_shutdown();
+				exit(0);
+
+			}
+		}
 	}
 }
 
@@ -116,7 +126,7 @@ void exitCheck() {
 	}
 }
 
-void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand) {
+void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand, int* limit) {
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-d") == 0) {
 			if (i + 1 < argc) {
@@ -125,7 +135,7 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand) {
 				fprintf(stderr, "Error: -d option requires an argument.\n");
 				exit(1);
 			}
-		} else if (strcmp(argv[i], "-c") == 0) {
+		} else if (strcmp(argv[i], "-c") == 0) {	
 			if (i + 1 < argc) {
 				*aliveChar = argv[++i][0];
 			} else {
@@ -139,12 +149,20 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand) {
 			printf("	-c [char]        Character representing a living cell.\n");
 			printf("	-d [int]         Delay time between ticks in milliseconds.\n");
 			printf("	-r		 Randomize the initial configuration.\n");
+			printf("	-l		 Limit the number of generations before exit\n");
 			printf("	-h               Show this help message.\n");
 			printf("Example:\n");
 			printf("	conway -c 8 -d 25\n\n");
 			exit(0);
 		} else if (strcmp(argv[i], "-r") == 0) {
 			*rand = 1;
+		} else if (strcmp(argv[i], "-l") == 0) {
+			if (i + 1 < argc) {
+				*limit = atoi(argv[++i]);
+			} else {
+				fprintf(stderr, "Error: -l option requires an argument.\n");
+				exit(1);
+			}
 		} else {
 			fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
 			exit(1);
