@@ -5,18 +5,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 void nextGeneration(int H, int W, int matrix[H][W]);
 void printMatrix(int H, int W, int matrix[H][W], char CHAR);
-void configParse(int H, int W, int matrix[H][W]);
+void configParse(int H, int W, int matrix[H][W], int RAND);
 void exitCheck();
-void argParse(int argc, char* argv[], int* delay, char* aliveChar);
+void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand);
 
 int main(int argc, char* argv[]) {	
 	// input
 	int DELAY = 100;
 	char CHAR = '@';
-	argParse(argc, argv, &DELAY, &CHAR);
+	int RAND  = 0;
+	argParse(argc, argv, &DELAY, &CHAR, &RAND);
 
 	// start termbox2
 	if (tb_init() != 0) {
@@ -32,7 +34,7 @@ int main(int argc, char* argv[]) {
 	// initial generation
 	int matrix[H][W];
 	memset(matrix, 0, sizeof(matrix));
-	configParse(H, W, matrix);	
+	configParse(H, W, matrix, RAND);	
 	
 	// loop
 	while(1) {
@@ -84,15 +86,24 @@ void printMatrix(int H, int W, int matrix[H][W], char CHAR) {
 	tb_present();
 }
 
-void configParse(int H, int W, int matrix[H][W]) {
-	H = H / 2 - 1;
-	W = W / 2 - 1;
-
-	matrix[H][W + 1] = 1;
-	matrix[H][W + 2] = 1;
-	matrix[H + 1][W] = 1;
-	matrix[H + 1][W + 1] = 1;
-	matrix[H + 2][W + 1] = 1;
+void configParse(int H, int W, int matrix[H][W], int RAND) {
+	if (RAND) {
+		srand(time(NULL));
+		for(int y = 0; y < H; y++) {
+			for (int x = 0; x < W; x++) {
+				matrix[y][x] = rand() % 2;
+			}
+		}
+	} else {
+		H = H / 2 - 1;
+		W = W / 2 - 1;
+	
+		matrix[H][W + 1] = 1;
+		matrix[H][W + 2] = 1;
+		matrix[H + 1][W] = 1;
+		matrix[H + 1][W + 1] = 1;
+		matrix[H + 2][W + 1] = 1;
+	}
 }
 
 void exitCheck() {
@@ -105,7 +116,7 @@ void exitCheck() {
 	}
 }
 
-void argParse(int argc, char* argv[], int* delay, char* aliveChar) {
+void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand) {
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-d") == 0) {
 			if (i + 1 < argc) {
@@ -127,10 +138,13 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar) {
 			printf("Options:\n");
 			printf("	-c [char]        Character representing a living cell.\n");
 			printf("	-d [int]         Delay time between ticks in milliseconds.\n");
+			printf("	-r		 Randomize the initial configuration.\n");
 			printf("	-h               Show this help message.\n");
 			printf("Example:\n");
 			printf("	conway -c 8 -d 25\n\n");
 			exit(0);
+		} else if (strcmp(argv[i], "-r") == 0) {
+			*rand = 1;
 		} else {
 			fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
 			exit(1);

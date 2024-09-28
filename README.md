@@ -26,6 +26,7 @@ Options:
 |-----------|------------------------------------------|
 |`-c [char]`| The character representing a living cell |
 |`-d [int]` | The delay time between ticks             |
+|`-r`       | Randomizes the initial generation        |
 |`-h`       | Show help                                |
 
 Other example:
@@ -52,6 +53,6 @@ sudo make install
 
 - [ ] Option to limit the number of generations.
 
-- [ ] Option to randomize the initial configuration.
+- [x] Option to randomize the initial configuration.
 
 - [ ] Color options.
