@@ -8,6 +8,7 @@
 
 void nextGeneration(int H, int W, int matrix[H][W]);
 void printMatrix(int H, int W, int matrix[H][W], char CHAR);
+void configParse(int H, int W, int matrix[H][W]);
 void exitCheck();
 void argParse(int argc, char* argv[], int* delay, char* aliveChar);
 
@@ -31,10 +32,7 @@ int main(int argc, char* argv[]) {
 	// initial generation
 	int matrix[H][W];
 	memset(matrix, 0, sizeof(matrix));
-	
-	// starting config
-	matrix[3][3] = 1; matrix[4][3] = 1; matrix[5][3] = 1;
-	matrix[4][2] = 1; matrix[5][4] = 1;
+	configParse(H, W, matrix);	
 	
 	// loop
 	while(1) {
@@ -84,6 +82,17 @@ void printMatrix(int H, int W, int matrix[H][W], char CHAR) {
 		}
 	}
 	tb_present();
+}
+
+void configParse(int H, int W, int matrix[H][W]) {
+	H = H / 2 - 1;
+	W = W / 2 - 1;
+
+	matrix[H][W + 1] = 1;
+	matrix[H][W + 2] = 1;
+	matrix[H + 1][W] = 1;
+	matrix[H + 1][W + 1] = 1;
+	matrix[H + 2][W + 1] = 1;
 }
 
 void exitCheck() {
