@@ -149,10 +149,8 @@ void argParse(int argc, char* argv[], int* delay, char* aliveChar, int* rand, in
 			printf("	-c [char]        Character representing a living cell.\n");
 			printf("	-d [int]         Delay time between ticks in milliseconds.\n");
 			printf("	-r		 Randomize the initial configuration.\n");
-			printf("	-l		 Limit the number of generations before exit\n");
+			printf("	-l [int]	 Limit the number of generations before exit\n");
 			printf("	-h               Show this help message.\n");
-			printf("Example:\n");
-			printf("	conway -c 8 -d 25\n\n");
 			exit(0);
 		} else if (strcmp(argv[i], "-r") == 0) {
 			*rand = 1;
